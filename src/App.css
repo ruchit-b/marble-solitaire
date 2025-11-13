@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+button{
+  outline: none;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -39,4 +43,67 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.board {
+  display: grid;
+  gap: 5px;
+}
+.row {
+  display: flex;
+}
+.cell {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.marble {
+  background-color: #555;
+  border-radius: 50%;
+}
+.selected {
+  background-color: violet;
+}
+.empty {
+  background-color: #444;
+  border-radius: 50%;
+}
+.empty-cell {
+  background-color: transparent;
+  border: none;
+}
+
+.game-over {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #ffcccc;
+  color: #990000;
+  font-weight: bold;
+  border: 2px solid #990000;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Win Message */
+.win-message {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #ccffcc;
+  color: #006600;
+  font-weight: bold;
+  border: 2px solid #006600;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
 }
