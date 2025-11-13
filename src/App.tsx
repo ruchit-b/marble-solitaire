@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 
 const initialBoard: (number | null)[][] = [
@@ -18,6 +18,8 @@ function App() {
   const [moveCount, setMoveCount] = useState(0)
   const [history, setHistory] = useState<(number | null)[][][]>([initialBoard])
   const [step, setStep] = useState(0)
+  const [isGameStarted, setIsGameStarted] = useState(false)
+  const [timeLapsed, setTimeLapsed] = useState(0)
 
   const isValidMove = useCallback(
     (boardState: (number | null)[][], src: [number, number], dest: [number, number]) => {
@@ -101,6 +103,7 @@ function App() {
 
       if (checkGameOver(newBoard)) {
         setGameOver(true)
+        setIsGameStarted(false)
       } else {
         setGameOver(false)
       }
@@ -112,7 +115,10 @@ function App() {
     (row: number, col: number) => {
       if (gameOver) return
       const cell = board[row][col]
-
+      if (!isGameStarted) {
+        setIsGameStarted(true)
+        setTimeLapsed(0)
+      }
       if (cell === null) return
 
       if (selected) {
@@ -121,7 +127,7 @@ function App() {
         setSelected([row, col])
       }
     },
-    [board, selected, makeMove, gameOver],
+    [board, selected, makeMove, gameOver, isGameStarted],
   )
 
   const undo = useCallback(() => {
@@ -153,15 +159,29 @@ function App() {
     setMoveCount(0)
     setStep(0)
     setHistory([initialBoard])
+    setTimeLapsed(0)
+    setIsGameStarted(false)
   }, [])
-
+  
   const remaining = board.flat().filter((x) => x === 1).length
   const isWin = remaining === 1 && board[3][3] === 1
+  
+  useEffect(() => {
+    if (!isGameStarted) return
+    const interval = setInterval(() => {
+      setTimeLapsed((prev) => prev + 1)
+    }, 1000)
+    if(isWin){
+      clearInterval(interval)
+    }
+    return () => clearInterval(interval)
+  }, [isGameStarted, isWin])
 
   return (
     <div>
       {isWin && <div className="win-message">Congratulations! You won!</div>}
       {gameOver && !isWin && <div className="game-over">Game Over!</div>}
+      {isGameStarted && <div className="time-lapsed">Time Lapsed: {timeLapsed} seconds</div>}
       <div className="board">
         {board.map((row, r) => (
           <div key={r} className="row">
@@ -185,8 +205,8 @@ function App() {
       <div>Moves: {moveCount}</div>
       <div className='buttons'>
 
-      <button onClick={undo}>Undo</button>
-      <button onClick={redo}>Redo</button>
+      <button onClick={undo} disabled={step === 0 ||isWin || gameOver}>Undo</button>
+      <button onClick={redo} disabled={step === history.length - 1 || isWin || gameOver}>Redo</button>
       <button onClick={reset}>Reset</button>
       </div>
     </div>
